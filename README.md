@@ -1,3 +1,4 @@
+<<<<<<< HEAD
 # EduMart - College Students Second Hand Product Exchange Platform
 
 ## Project Overview
@@ -160,3 +161,6 @@ EduMart1/
 
 **Note**: Change the default admin password after first login.
 
+=======
+# EduMart
+>>>>>>> 88c6d5db5ceb862e6ffd38bcb2e9e6f9dd5568e2

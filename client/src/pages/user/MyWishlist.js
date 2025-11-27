@@ -2,75 +2,94 @@ import React, { useState, useEffect } from 'react';
 import { Link } from 'react-router-dom';
 import axios from 'axios';
 import { toast } from 'react-toastify';
-import './MyWishlist.css';
+import './MyProducts.css';
 
-const MyWishlist = () => {
-  const [wishlist, setWishlist] = useState([]);
+const MyProducts = () => {
+  const [products, setProducts] = useState([]);
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
-    fetchWishlist();
+    fetchMyProducts();
   }, []);
 
-  const fetchWishlist = async () => {
+  const fetchMyProducts = async () => {
     try {
-      const res = await axios.get('/api/wishlist');
-      setWishlist(res.data.data);
+      const res = await axios.get('/api/products/my-products');
+      setProducts(res.data.data);
     } catch (error) {
-      toast.error('Error fetching wishlist');
+      toast.error('Error fetching your products');
     } finally {
       setLoading(false);
     }
   };
 
-  const handleRemove = async (id) => {
+  const handleDelete = async (productId) => {
+    if (!window.confirm('Are you sure you want to delete this product?')) {
+      return;
+    }
+
     try {
-      await axios.delete(`/api/wishlist/${id}`);
-      toast.success('Removed from wishlist');
-      fetchWishlist();
+      await axios.delete(`/api/products/${productId}`);
+      toast.success('Product deleted successfully');
+      fetchMyProducts();
     } catch (error) {
-      toast.error('Error removing from wishlist');
+      toast.error('Error deleting product');
     }
   };
 
   if (loading) {
-    return <div className="loading">Loading wishlist...</div>;
+    return <div className="loading">Loading your products...</div>;
   }
 
   return (
-    <div className="my-wishlist">
+    <div className="my-products">
       <div className="container">
-        <h1>My Wishlist</h1>
+        <div className="my-products-header">
+          <h1>My Products</h1>
+          <Link to="/sell-product" className="add-product-btn">
+            Add New Product
+          </Link>
+        </div>
 
-        {wishlist.length === 0 ? (
-          <div className="no-items">No items in wishlist</div>
+        {products.length === 0 ? (
+          <div className="no-products">
+            <p>You haven't listed any products yet.</p>
+            <Link to="/sell-product" className="cta-btn">
+              List Your First Product
+            </Link>
+          </div>
         ) : (
-          <div className="wishlist-grid">
-            {wishlist.map((item) => (
-              <div key={item._id} className="wishlist-item">
-                <Link to={`/products/${item.product._id}`}>
-                  <div className="item-image">
-                    {item.product.images && item.product.images.length > 0 ? (
-                      <img
-                        src={`http://localhost:5000/${item.product.images[0]}`}
-                        alt={item.product.name}
-                      />
-                    ) : (
-                      <div className="no-image">No Image</div>
-                    )}
-                  </div>
-                  <div className="item-info">
-                    <h3>{item.product.name}</h3>
-                    <p className="item-price">₹{item.product.price}</p>
-                    <p className="item-category">{item.product.category}</p>
-                  </div>
-                </Link>
-                <button
-                  onClick={() => handleRemove(item._id)}
-                  className="remove-btn"
-                >
-                  Remove
-                </button>
+          <div className="products-grid">
+            {products.map((product) => (
+              <div key={product._id} className="product-card">
+                <div className="product-image">
+                  {product.images && product.images.length > 0 ? (
+                    <img
+                      src={`http://localhost:5000/${product.images[0]}`}
+                      alt={product.name}
+                    />
+                  ) : (
+                    <div className="no-image">No Image</div>
+                  )}
+                </div>
+                <div className="product-info">
+                  <h3>{product.name}</h3>
+                  <p className="product-category">{product.category}</p>
+                  <p className="product-price">₹{product.price}</p>
+                  <p className="product-condition">Condition: {product.condition}</p>
+                  <p className="product-status">Status: {product.status}</p>
+                  <p className="product-available">
+                    Available: {product.available ? 'Yes' : 'No'}
+                  </p>
+                </div>
+                <div className="product-actions">
+                  <button
+                    onClick={() => handleDelete(product._id)}
+                    className="delete-btn"
+                  >
+                    Delete
+                  </button>
+                </div>
               </div>
             ))}
           </div>
@@ -80,5 +99,4 @@ const MyWishlist = () => {
   );
 };
 
-export default MyWishlist;
-
+export default MyProducts;

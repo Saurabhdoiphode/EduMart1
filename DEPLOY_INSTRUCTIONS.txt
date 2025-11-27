@@ -1,0 +1,82 @@
+🚀 QUICK DEPLOYMENT STEPS FOR GITHUB PAGES
+==========================================
+
+STEP 1: Install gh-pages package
+---------------------------------
+Open terminal in the client folder and run:
+  cd client
+  npm install --save-dev gh-pages
+
+STEP 2: Deploy to GitHub Pages
+-------------------------------
+Run this command:
+  npm run deploy
+
+This will:
+  ✅ Build your React app
+  ✅ Create a 'gh-pages' branch
+  ✅ Deploy the build folder to GitHub Pages
+
+STEP 3: Configure GitHub Pages Settings
+----------------------------------------
+1. Go to your GitHub repository: https://github.com/arnavmarkali7-star/EduMart
+2. Click on "Settings"
+3. Scroll down to "Pages" section
+4. Under "Source", select:
+   - Branch: gh-pages
+   - Folder: / (root)
+5. Click "Save"
+
+STEP 4: Wait for Deployment
+----------------------------
+- Wait 1-2 minutes for GitHub to deploy
+- Your site will be available at: https://arnavmarkali7-star.github.io/EduMart/
+
+STEP 5: Update Your Deployment (When You Make Changes)
+-------------------------------------------------------
+Every time you make changes to your app, run:
+  cd client
+  npm run deploy
+
+IMPORTANT NOTES:
+================
+
+1. Backend API: GitHub Pages only hosts static files. Your backend won't work on GitHub Pages.
+   You need to deploy your backend separately to:
+   - Heroku
+   - Railway
+   - Render
+   - Vercel
+   - DigitalOcean
+   - AWS
+
+2. Routing: The app now uses HashRouter which adds '#' to URLs.
+   Example: https://arnavmarkali7-star.github.io/EduMart/#/products
+   This is required for GitHub Pages to work correctly.
+
+3. API URLs: Update your API calls to point to your production backend URL.
+   Create a .env.production file in client/ with:
+     REACT_APP_API_URL=https://your-backend-url.com
+
+TROUBLESHOOTING:
+================
+
+Issue: Blank page
+Solution: 
+  - Check browser console for errors
+  - Clear browser cache
+  - Make sure build was successful
+
+Issue: 404 Error on refresh
+Solution: 
+  - Already fixed with HashRouter
+  - Make sure you're using the deployed version
+
+Issue: API calls not working
+Solution: 
+  - Deploy backend to cloud service
+  - Update API URLs in your code
+  - Update CORS settings in backend
+
+For more details, see DEPLOYMENT.md file.
+

@@ -1,8 +1,10 @@
-<<<<<<< HEAD
 # EduMart - College Students Second Hand Product Exchange Platform
 
 ## Project Overview
 EduMart is a platform where college students can exchange second-hand products. The platform includes user panels, admin panels, and seller hubs with comprehensive features.
+
+## 🌐 Live Demo
+**GitHub Pages**: [https://arnavmarkali7-star.github.io/EduMart/](https://arnavmarkali7-star.github.io/EduMart/)
 
 ## Features
 
@@ -161,6 +163,6 @@ EduMart1/
 
 **Note**: Change the default admin password after first login.
 
-=======
-# EduMart
->>>>>>> 88c6d5db5ceb862e6ffd38bcb2e9e6f9dd5568e2
+## Deployment to GitHub Pages
+
+See `DEPLOYMENT.md` for detailed deployment instructions.

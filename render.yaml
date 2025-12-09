@@ -4,18 +4,21 @@ services:
     env: node
     plan: free
     region: singapore
-    buildCommand: npm install && cd client && npm install && cd client && npm run build
+    buildCommand: npm install && cd client && npm install && npm run build
     startCommand: cd server && node index.js
     envVars:
       - key: MONGODB_URI
-        scope: build
-        value: ${DATABASE_URL}
+        value: "<set in Render dashboard>"
       - key: JWT_SECRET
-        scope: build
-        value: ${JWT_SECRET}
+        value: "<set in Render dashboard>"
+      - key: JWT_EXPIRE
+        value: "7d"
       - key: NODE_ENV
         value: production
       - key: PORT
         value: "10000"
+      - key: REACT_APP_API_URL
+        scope: build
+        value: https://edumart.onrender.com
       - key: CORS_ORIGIN
         value: https://edumart.onrender.com

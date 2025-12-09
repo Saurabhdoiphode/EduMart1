@@ -65,13 +65,33 @@ exports.createOrder = async (req, res) => {
       });
     }
 
-    // Create notification for seller
+    // Get product details for notification
+    const productDetails = [];
+    for (const item of products) {
+      const product = await Product.findById(item.product);
+      productDetails.push({
+        name: product.name,
+        price: item.price || product.price,
+        quantity: item.quantity || 1
+      });
+    }
+
+    const productList = productDetails.map(p => `${p.name} (Qty: ${p.quantity})`).join(', ');
+
+    // Create notification for seller with full details
     await Notification.create({
       user: sellerId,
       type: 'order',
-      title: 'New Order Received',
-      message: `You have received a new order from ${req.user.name}`,
-      link: `/orders/${order._id}`
+      title: 'New Order Received! 🎉',
+      message: `New order from ${req.user.name} - ${productList} - ₹${totalAmount}`,
+      link: `/seller/orders`,
+      metadata: {
+        orderId: order._id,
+        buyerName: req.user.name,
+        products: productDetails,
+        totalAmount: totalAmount,
+        buyerContact: req.user.email
+      }
     });
 
     res.status(201).json({

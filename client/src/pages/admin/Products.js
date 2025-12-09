@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import axios from 'axios';
+import API_URL from '../../config/api';
 import './Products.css';
 
 const AdminProducts = () => {
@@ -36,7 +37,7 @@ const AdminProducts = () => {
               <div className="product-image">
                 {product.images && product.images.length > 0 ? (
                   <img
-                    src={`http://localhost:5000/${product.images[0]}`}
+                    src={`${API_URL}/${product.images[0]}`}
                     alt={product.name}
                   />
                 ) : (

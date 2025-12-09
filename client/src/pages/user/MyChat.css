@@ -233,11 +233,38 @@
   line-height: 1.4;
 }
 
-.message-time {
+.message-footer {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
   font-size: 0.7rem;
   opacity: 0.7;
   align-self: flex-end;
   margin-top: 0.25rem;
+}
+
+.message-time {
+  font-size: 0.7rem;
+  opacity: 0.7;
+}
+
+.ticks-icon {
+  font-size: 0.8rem;
+  font-weight: bold;
+  letter-spacing: -2px;
+  display: inline-block;
+  line-height: 1;
+}
+
+.ticks-icon.gray-ticks {
+  color: inherit;
+  opacity: 0.7;
+}
+
+.ticks-icon.blue-ticks {
+  color: #00d4ff;
+  opacity: 1;
+  font-weight: bold;
 }
 
 .message-input {

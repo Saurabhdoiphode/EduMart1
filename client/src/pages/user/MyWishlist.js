@@ -2,6 +2,7 @@ import React, { useState, useEffect } from 'react';
 import { Link } from 'react-router-dom';
 import axios from 'axios';
 import { toast } from 'react-toastify';
+import API_URL from '../../config/api';
 import './MyProducts.css';
 
 const MyProducts = () => {
@@ -15,7 +16,7 @@ const MyProducts = () => {
   const fetchMyProducts = async () => {
     try {
       const res = await axios.get('/api/products/my-products');
-      setProducts(res.data.data);
+      setProducts(res.data.data || []);
     } catch (error) {
       toast.error('Error fetching your products');
     } finally {
@@ -65,7 +66,7 @@ const MyProducts = () => {
                 <div className="product-image">
                   {product.images && product.images.length > 0 ? (
                     <img
-                      src={`http://localhost:5000/${product.images[0]}`}
+                      src={`${API_URL}/${product.images[0]}`}
                       alt={product.name}
                     />
                   ) : (

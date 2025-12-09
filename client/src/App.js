@@ -19,7 +19,8 @@ import ProductDetail from './pages/ProductDetail';
 import Dashboard from './pages/user/Dashboard';
 import Profile from './pages/user/Profile';
 import MyOrders from './pages/user/MyOrders';
-import MyWishlist from './pages/user/MyWishlist';
+import MyProducts from './pages/user/MyWishlist';
+import Wishlist from './pages/user/Wishlist';
 import MyChat from './pages/user/MyChat';
 import MyComplaints from './pages/user/MyComplaints';
 import SellProduct from './pages/user/SellProduct';
@@ -74,7 +75,15 @@ function App() {
               path="/my-wishlist"
               element={
                 <PrivateRoute>
-                  <MyWishlist />
+                  <Wishlist />
+                </PrivateRoute>
+              }
+            />
+            <Route
+              path="/my-products"
+              element={
+                <PrivateRoute>
+                  <MyProducts />
                 </PrivateRoute>
               }
             />

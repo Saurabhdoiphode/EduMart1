@@ -1,6 +1,7 @@
 import React, { useEffect, useState } from 'react';
 import { Link } from 'react-router-dom';
 import axios from 'axios';
+import API_URL from '../config/api';
 import './Home.css';
 
 const Home = () => {
@@ -78,7 +79,7 @@ const Home = () => {
                   <div className="product-image">
                     {product.images && product.images.length > 0 ? (
                       <img
-                        src={`http://localhost:5000/${product.images[0]}`}
+                        src={`${API_URL}/${product.images[0]}`}
                         alt={product.name}
                       />
                     ) : (

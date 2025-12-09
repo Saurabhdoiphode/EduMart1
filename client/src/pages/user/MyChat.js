@@ -4,6 +4,7 @@ import axios from 'axios';
 import io from 'socket.io-client';
 import { AuthContext } from '../../context/AuthContext';
 import { toast } from 'react-toastify';
+import API_URL from '../../config/api';
 import './MyChat.css';
 
 const MyChat = () => {
@@ -28,7 +29,7 @@ const MyChat = () => {
   useEffect(() => {
     if (!user) return;
 
-    const newSocket = io('http://localhost:5000', {
+    const newSocket = io(API_URL, {
       transports: ['websocket', 'polling']
     });
     
@@ -76,6 +77,30 @@ const MyChat = () => {
           }];
         });
       }
+    });
+
+    newSocket.on('message-delivered', (data) => {
+      // Update message status to delivered
+      setMessages(prevMessages => {
+        return prevMessages.map(msg => {
+          if (msg._id === data.messageId) {
+            return { ...msg, status: 'delivered', delivered: true };
+          }
+          return msg;
+        });
+      });
+    });
+
+    newSocket.on('message-read', (data) => {
+      // Update message status to read
+      setMessages(prevMessages => {
+        return prevMessages.map(msg => {
+          if (msg._id === data.messageId) {
+            return { ...msg, status: 'read', read: true };
+          }
+          return msg;
+        });
+      });
     });
 
     newSocket.on('disconnect', () => {
@@ -182,12 +207,15 @@ const MyChat = () => {
       const messageText = newMessage.trim();
       setNewMessage('');
 
-      // Optimistically add message to UI
+      // Optimistically add message to UI with sent status
       const tempMessage = {
+        _id: Date.now().toString(),
         sender: user._id || user.id,
         message: messageText,
         timestamp: Date.now(),
-        read: false
+        read: false,
+        delivered: false,
+        status: 'sent'
       };
       setMessages((prev) => [...prev, tempMessage]);
 
@@ -196,11 +224,31 @@ const MyChat = () => {
         message: messageText
       });
 
-      // Update messages with server response
-      if (res.data.data && res.data.data.messages) {
-        setMessages(res.data.data.messages);
-      } else {
-        fetchMessages();
+      // Get receiver ID
+      const receiverId = selectedChat.participants.find(
+        p => (p._id || p) !== (user._id || user.id)
+      );
+
+      // Emit socket event to notify receiver (message delivered)
+      if (socket && res.data.data) {
+        socket.emit('send-message', {
+          chatId: selectedChat._id,
+          messageId: res.data.data._id,
+          receiverId: receiverId._id || receiverId,
+          sender: user._id || user.id,
+          message: messageText,
+          timestamp: res.data.data.timestamp,
+          status: 'sent'
+        });
+      }
+
+      // Replace temp message with actual message from server
+      if (res.data.data) {
+        setMessages(prev => {
+          return prev.map(msg => 
+            msg._id === tempMessage._id ? res.data.data : msg
+          );
+        });
       }
 
       // Refresh chats to update last message
@@ -328,18 +376,35 @@ const MyChat = () => {
                 ) : (
                   messages.map((message, index) => {
                     const isMine = isMessageFromMe(message);
+                    const status = message.status || 'sent';
+                    
+                    const getTickIcon = () => {
+                      if (!isMine) return null;
+                      
+                      if (status === 'read') {
+                        return <span className="ticks-icon blue-ticks">✓✓</span>;
+                      } else if (status === 'delivered') {
+                        return <span className="ticks-icon gray-ticks">✓✓</span>;
+                      } else {
+                        return <span className="ticks-icon gray-ticks">✓</span>;
+                      }
+                    };
+
                     return (
                       <div
                         key={message._id || index}
                         className={`message ${isMine ? 'sent' : 'received'}`}
                       >
                         <p className="message-text">{message.message}</p>
-                        <span className="message-time">
-                          {new Date(message.timestamp || Date.now()).toLocaleTimeString([], {
-                            hour: '2-digit',
-                            minute: '2-digit'
-                          })}
-                        </span>
+                        <div className="message-footer">
+                          <span className="message-time">
+                            {new Date(message.timestamp || Date.now()).toLocaleTimeString([], {
+                              hour: '2-digit',
+                              minute: '2-digit'
+                            })}
+                          </span>
+                          {getTickIcon()}
+                        </div>
                       </div>
                     );
                   })

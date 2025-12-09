@@ -106,13 +106,28 @@ exports.getChatById = async (req, res) => {
       });
     }
 
-    // Mark messages as read when user opens chat
+    // Mark messages as delivered and read when user opens chat
+    let hasChanged = false;
     chat.messages.forEach(msg => {
       if (msg.sender.toString() !== req.user.id) {
-        msg.read = true;
+        // Mark as delivered if not already
+        if (!msg.delivered) {
+          msg.delivered = true;
+          msg.status = 'delivered';
+          hasChanged = true;
+        }
+        // Mark as read
+        if (!msg.read) {
+          msg.read = true;
+          msg.status = 'read';
+          hasChanged = true;
+        }
       }
     });
-    await chat.save();
+    
+    if (hasChanged) {
+      await chat.save();
+    }
 
     res.json({
       success: true,
@@ -152,23 +167,39 @@ exports.sendMessage = async (req, res) => {
       });
     }
 
-    // Add message
-    chat.messages.push({
+    // Add message with initial status as 'sent'
+    const newMessage = {
       sender: req.user.id,
       message,
-      read: false
-    });
+      read: false,
+      delivered: false,
+      status: 'sent',
+      timestamp: Date.now()
+    };
 
+    chat.messages.push(newMessage);
     chat.lastMessage = message;
     chat.lastMessageTime = Date.now();
     chat.updatedAt = Date.now();
 
     await chat.save();
 
+    // Get the newly added message with proper formatting
+    const savedChat = await Chat.findById(chatId)
+      .populate('participants', 'name email avatar')
+      .populate('messages.sender', 'name avatar');
+
+    const addedMessage = savedChat.messages[savedChat.messages.length - 1];
+
     // Get receiver ID
     const receiverId = chat.participants.find(
       id => id.toString() !== req.user.id.toString()
     );
+
+    res.json({
+      success: true,
+      data: addedMessage
+    });
 
     if (receiverId) {
       // Create notification

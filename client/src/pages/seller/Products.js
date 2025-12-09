@@ -2,6 +2,7 @@ import React, { useState, useEffect } from 'react';
 import { Link } from 'react-router-dom';
 import axios from 'axios';
 import { toast } from 'react-toastify';
+import API_URL from '../../config/api';
 import './Products.css';
 
 const SellerProducts = () => {
@@ -50,7 +51,7 @@ const SellerProducts = () => {
               <div className="product-image">
                 {product.images && product.images.length > 0 ? (
                   <img
-                    src={`http://localhost:5000/${product.images[0]}`}
+                    src={`${API_URL}/${product.images[0]}`}
                     alt={product.name}
                   />
                 ) : (

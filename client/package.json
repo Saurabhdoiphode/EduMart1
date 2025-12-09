@@ -1,7 +1,7 @@
 {
   "name": "edumart-client",
   "version": "0.1.0",
-  "homepage": "https://arnavmarkali7-star.github.io/EduMart",
+  "homepage": "/",
   "private": true,
   "dependencies": {
     "axios": "^1.5.1",

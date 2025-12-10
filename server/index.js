@@ -73,9 +73,12 @@ io.on('connection', (socket) => {
 // Middleware
 app.use(cors({
   origin: process.env.CORS_ORIGIN || ['http://localhost:3000', 'http://localhost:3001'],
-  credentials: true
+  credentials: true,
+  methods: ['GET', 'POST', 'PUT', 'DELETE', 'OPTIONS'],
+  allowedHeaders: ['Content-Type', 'Authorization'],
+  maxAge: 86400 // 24 hours
 }));
-app.use(express.json());
+app.use(express.json({ limit: '50mb' }));
 app.use(express.urlencoded({ limit: '50mb', extended: true }));
 
 // Serve static files from React build (if exists)

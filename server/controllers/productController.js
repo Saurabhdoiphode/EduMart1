@@ -114,7 +114,15 @@ exports.createProduct = async (req, res) => {
       location
     } = req.body;
 
-    const images = req.files ? req.files.map(file => file.path) : [];
+    // Images are optional for Render (ephemeral filesystem)
+    let images = [];
+    if (req.files && req.files.length > 0) {
+      try {
+        images = req.files.map(file => file.path);
+      } catch (uploadErr) {
+        console.warn('Image upload failed, continuing without images:', uploadErr.message);
+      }
+    }
 
     const product = await Product.create({
       name,

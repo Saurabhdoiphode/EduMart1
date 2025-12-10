@@ -15,6 +15,9 @@ const io = socketIO(server, {
   }
 });
 
+// Make socket.io instance available to route handlers
+app.set('io', io);
+
 const PORT = process.env.PORT || 5000;
 
 // Connect to MongoDB

@@ -154,14 +154,16 @@ const MyChat = () => {
     scrollToBottom();
   }, [messages]);
 
-  const fetchChats = async () => {
+  const fetchChats = async (showError = true) => {
     try {
       setLoading(true);
-      const res = await axios.get('/api/chat');
+      const res = await axios.get(`${API_URL}/api/chat`);
       setChats(res.data.data || []);
     } catch (error) {
-      console.error('Error fetching chats:', error);
-      toast.error('Error loading chats');
+      console.error('Error fetching chats:', error?.response?.data || error.message);
+      if (showError) {
+        toast.error('Error loading chats');
+      }
     } finally {
       setLoading(false);
     }
@@ -170,7 +172,7 @@ const MyChat = () => {
   const fetchMessages = async () => {
     if (!selectedChat) return;
     try {
-      const res = await axios.get(`/api/chat/chat/${selectedChat._id}`);
+      const res = await axios.get(`${API_URL}/api/chat/chat/${selectedChat._id}`);
       setMessages(res.data.data.messages || []);
     } catch (error) {
       console.error('Error fetching messages:', error);
@@ -181,7 +183,7 @@ const MyChat = () => {
   const markMessagesAsRead = async () => {
     if (!selectedChat) return;
     try {
-      await axios.put(`/api/chat/${selectedChat._id}/read`);
+      await axios.put(`${API_URL}/api/chat/${selectedChat._id}/read`);
       // Update chat unread count
       setChats(prevChats => 
         prevChats.map(chat => 
@@ -220,7 +222,7 @@ const MyChat = () => {
       setMessages((prev) => [...prev, tempMessage]);
 
       // Send message to server
-      const res = await axios.post(`/api/chat/${selectedChat._id}/message`, {
+      const res = await axios.post(`${API_URL}/api/chat/${selectedChat._id}/message`, {
         message: messageText
       });
 
@@ -252,7 +254,7 @@ const MyChat = () => {
       }
 
       // Refresh chats to update last message
-      fetchChats();
+      fetchChats(false);
     } catch (error) {
       toast.error('Error sending message');
       // Remove optimistic message on error
@@ -262,7 +264,7 @@ const MyChat = () => {
 
   const handleStartChat = async (userId) => {
     try {
-      const res = await axios.get(`/api/chat/user/${userId}`);
+      const res = await axios.get(`${API_URL}/api/chat/user/${userId}`);
       const chat = res.data.data;
       setSelectedChat(chat);
       // Check if chat already exists in list

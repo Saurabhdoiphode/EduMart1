@@ -196,11 +196,6 @@ exports.sendMessage = async (req, res) => {
       id => id.toString() !== req.user.id.toString()
     );
 
-    res.json({
-      success: true,
-      data: addedMessage
-    });
-
     if (receiverId) {
       // Create notification
       await Notification.create({
@@ -225,13 +220,10 @@ exports.sendMessage = async (req, res) => {
       }
     }
 
-    const updatedChat = await Chat.findById(chatId)
-      .populate('participants', 'name email avatar');
-
     res.json({
       success: true,
       message: 'Message sent successfully',
-      data: updatedChat
+      data: addedMessage
     });
   } catch (error) {
     res.status(500).json({

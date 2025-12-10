@@ -114,6 +114,22 @@ exports.createProduct = async (req, res) => {
       location
     } = req.body;
 
+    // Validate required fields
+    if (!name || !description || !category || !price || !condition) {
+      return res.status(400).json({
+        success: false,
+        message: 'Missing required fields: name, description, category, price, condition'
+      });
+    }
+
+    // Validate price
+    if (isNaN(price) || price <= 0) {
+      return res.status(400).json({
+        success: false,
+        message: 'Price must be a valid number greater than 0'
+      });
+    }
+
     // Images are optional for Render (ephemeral filesystem)
     let images = [];
     if (req.files && req.files.length > 0) {
@@ -128,8 +144,8 @@ exports.createProduct = async (req, res) => {
       name,
       description,
       category,
-      price,
-      originalPrice,
+      price: Number(price),
+      originalPrice: originalPrice ? Number(originalPrice) : undefined,
       condition,
       location,
       images,
@@ -147,6 +163,7 @@ exports.createProduct = async (req, res) => {
       data: product
     });
   } catch (error) {
+    console.error('Product creation error:', error);
     res.status(500).json({
       success: false,
       message: 'Server error',

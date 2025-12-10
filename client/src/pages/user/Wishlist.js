@@ -5,6 +5,11 @@ import { toast } from 'react-toastify';
 import API_URL from '../../config/api';
 import './MyWishlist.css';
 
+const getImageUrl = (path) => {
+  if (!path) return '';
+  return path.startsWith('http') ? path : `${API_URL}/${path}`;
+};
+
 const MyWishlist = () => {
   const [wishlist, setWishlist] = useState([]);
   const [loading, setLoading] = useState(true);
@@ -60,7 +65,7 @@ const MyWishlist = () => {
                 <div className="product-image">
                   {item.product && item.product.images && item.product.images.length > 0 ? (
                     <img
-                      src={`${API_URL}/${item.product.images[0]}`}
+                      src={getImageUrl(item.product.images[0])}
                       alt={item.product.name}
                     />
                   ) : (

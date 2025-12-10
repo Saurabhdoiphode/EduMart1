@@ -4,6 +4,11 @@ import axios from 'axios';
 import API_URL from '../config/api';
 import './Home.css';
 
+const getImageUrl = (path) => {
+  if (!path) return '';
+  return path.startsWith('http') ? path : `${API_URL}/${path}`;
+};
+
 const Home = () => {
   const [products, setProducts] = useState([]);
   const [loading, setLoading] = useState(true);
@@ -79,7 +84,7 @@ const Home = () => {
                   <div className="product-image">
                     {product.images && product.images.length > 0 ? (
                       <img
-                        src={`${API_URL}/${product.images[0]}`}
+                        src={getImageUrl(product.images[0])}
                         alt={product.name}
                       />
                     ) : (

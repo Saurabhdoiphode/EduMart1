@@ -20,9 +20,14 @@ const SellProduct = () => {
 
   const handleChange = (e) => {
     if (e.target.name === 'images') {
+      const files = Array.from(e.target.files || []);
+      if (files.length > 5) {
+        toast.error('You can upload up to 5 images');
+        return;
+      }
       setFormData({
         ...formData,
-        images: e.target.files
+        images: files
       });
     } else {
       setFormData({
@@ -46,8 +51,8 @@ const SellProduct = () => {
       formDataToSend.append('condition', formData.condition);
       formDataToSend.append('location', formData.location);
 
-      if (formData.images) {
-        Array.from(formData.images).forEach((image) => {
+      if (formData.images && formData.images.length) {
+        formData.images.forEach((image) => {
           formDataToSend.append('images', image);
         });
       }

@@ -16,6 +16,7 @@ const ProductDetail = () => {
   const navigate = useNavigate();
   const { user } = useContext(AuthContext);
   const [product, setProduct] = useState(null);
+  const [activeImage, setActiveImage] = useState(0);
   const [ratings, setRatings] = useState([]);
   const [loading, setLoading] = useState(true);
   const [inWishlist, setInWishlist] = useState(false);
@@ -38,6 +39,7 @@ const ProductDetail = () => {
       console.log('Product data:', productData);
       console.log('Seller data:', productData?.seller);
       setProduct(productData);
+      setActiveImage(0);
     } catch (error) {
       console.error('Error loading product:', error);
       toast.error('Error loading product');
@@ -160,6 +162,8 @@ const ProductDetail = () => {
     return <div className="error">Product not found</div>;
   }
 
+  const productImages = product.images || [];
+
   const averageRating = ratings.length > 0
     ? (ratings.reduce((sum, r) => sum + r.rating, 0) / ratings.length).toFixed(1)
     : 0;
@@ -169,11 +173,29 @@ const ProductDetail = () => {
       <div className="container">
         <div className="product-detail-layout">
           <div className="product-images">
-            {product.images && product.images.length > 0 ? (
-              <img
-                src={getImageUrl(product.images[0])}
-                alt={product.name}
-              />
+            {productImages.length > 0 ? (
+              <>
+                <div className="main-image">
+                  <img
+                    src={getImageUrl(productImages[activeImage])}
+                    alt={product.name}
+                  />
+                </div>
+                {productImages.length > 1 && (
+                  <div className="thumbnail-row">
+                    {productImages.map((img, idx) => (
+                      <button
+                        key={idx}
+                        type="button"
+                        className={`thumbnail ${activeImage === idx ? 'active' : ''}`}
+                        onClick={() => setActiveImage(idx)}
+                      >
+                        <img src={getImageUrl(img)} alt={`${product.name} ${idx + 1}`} />
+                      </button>
+                    ))}
+                  </div>
+                )}
+              </>
             ) : (
               <div className="no-image">No Image</div>
             )}

@@ -55,13 +55,16 @@ const SellProduct = () => {
       const res = await axios.post('/api/products', formDataToSend, {
         headers: {
           'Content-Type': 'multipart/form-data'
-        }
+        },
+        timeout: 60000 // 60 second timeout for mobile/slow connections
       });
 
       toast.success('Product created successfully!');
       navigate('/seller/products');
     } catch (error) {
-      toast.error(error.response?.data?.message || 'Error creating product');
+      console.error('Product creation error:', error);
+      const errorMsg = error.response?.data?.message || error.message || 'Error creating product';
+      toast.error(errorMsg);
     } finally {
       setLoading(false);
     }

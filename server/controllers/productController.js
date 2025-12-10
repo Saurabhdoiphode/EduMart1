@@ -130,11 +130,14 @@ exports.createProduct = async (req, res) => {
       });
     }
 
-    // Images are optional for Render (ephemeral filesystem)
+    // Handle images (Cloudinary or local path)
     let images = [];
     if (req.files && req.files.length > 0) {
       try {
-        images = req.files.map(file => file.path);
+        images = req.files.map(file => {
+          // If Cloudinary, use the secure URL, otherwise use path
+          return file.path.startsWith('http') ? file.path : file.path;
+        });
       } catch (uploadErr) {
         console.warn('Image upload failed, continuing without images:', uploadErr.message);
       }
